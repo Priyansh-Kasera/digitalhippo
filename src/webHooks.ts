@@ -6,6 +6,7 @@ import { getPayloadClient } from "./get-payload";
 import { Product } from "./payload-types";
 import { Resend } from "resend";
 import { ReceiptEmailHtml } from "./components/emails/ReceiptEmail";
+import nodemailer from "nodemailer";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -82,8 +83,18 @@ export const stripWebHookHandler = async (
 
     // send receipt
     try {
-      const data = await resend.emails.send({
-        from: "DigitalHippo <hello@joshtriedcoding.com>",
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        secure: true,
+        port: 465,
+        service: "gmail",
+        auth: {
+          user: "testmail.ppkk@gmail.com",
+          pass: "lncyspidxfbcggtn",
+        },
+      });
+      const data = await transporter.sendMail({
+        from: "testmail.ppkk@gmail.com",
         to: [user.email],
         subject: "Thanks for your order! This is your receipt.",
         html: ReceiptEmailHtml({
