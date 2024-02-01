@@ -94,7 +94,7 @@ export const stripWebHookHandler = async (
         },
       });
       const data = await transporter.sendMail({
-        from: "testmail.ppkk@gmail.com",
+        from: "DigitalHippo <testmail.ppkk@gmail.com>",
         to: [user.email],
         subject: "Thanks for your order! This is your receipt.",
         html: ReceiptEmailHtml({

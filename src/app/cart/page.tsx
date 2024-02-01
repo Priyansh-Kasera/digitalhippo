@@ -11,44 +11,45 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-const Page = ()=> {
-    const {items, removeItem} = useCart()
+const Page = () => {
+    const { items, removeItem, clearCart } = useCart()
 
     const route = useRouter()
 
-    const {mutate: createCheckoutSession,isLoading} = trpc.payment.createSession.useMutation({
-        onSuccess:  ({url})=> {
-            if(url) route.push(url)
+    const { mutate: createCheckoutSession, isLoading } = trpc.payment.createSession.useMutation({
+        onSuccess: ({ url }) => {
+            clearCart()
+            if (url) route.push(url)
         }
     })
 
-    const productIds = items.map(({product})=> product.id)
+    const productIds = items.map(({ product }) => product.id)
 
     const [isMounted, setIsMounted] = useState<boolean>(false)
 
     const cartTotal = items.reduce(
-        (total,{product}) => total+ product.price,
+        (total, { product }) => total + product.price,
         0
     )
 
     const fee = 1
-    
-    useEffect(()=>{
+
+    useEffect(() => {
         setIsMounted(true)
-    },[])
+    }, [])
     return (
         <div className="bg-white">
             <div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:px-8 lg:max-w-7xl">
                 <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl ">
                     Shopping Cart
                 </h1>
-            
+
                 <div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
-                    <div 
-                    className={cn('lg:col-span-7', {
-                        'rounded-lg border-2 border-dashed border-zinc-200 p-12':
-                        isMounted && items.length === 0,
-                    })}>
+                    <div
+                        className={cn('lg:col-span-7', {
+                            'rounded-lg border-2 border-dashed border-zinc-200 p-12':
+                                isMounted && items.length === 0,
+                        })}>
                         <h2 className="sr-only">
                             Items in your shopping cart
                         </h2>
@@ -67,28 +68,28 @@ const Page = ()=> {
 
                         <ul className={cn({
                             "divide-y divide-gray-200 border-b border-t border-gray-200":
-                            isMounted && items.length > 0,
+                                isMounted && items.length > 0,
 
                         })}>
                             {
-                                isMounted && items.map(({product})=> {
-                                    const label = PRODUCT_CATEGORIES.find((c)=> c.value === product.category)?.label
+                                isMounted && items.map(({ product }) => {
+                                    const label = PRODUCT_CATEGORIES.find((c) => c.value === product.category)?.label
 
-                                    const {image} = product.images[0]
+                                    const { image } = product.images[0]
                                     return (
                                         <li key={product.id}
-                                        className="flex py-6 sm:py-10 ">
+                                            className="flex py-6 sm:py-10 ">
                                             <div className="flex-shrink-0">
                                                 <div className="relative h-24 w-24">
                                                     {
                                                         typeof image !== 'string' && image.url ?
-                                                        ( 
-                                                            <Image fill src={image.url}
-                                                             alt='Product image'
-                                                            className="h-4 w-4 rounded-md object-cover object-center sm:w-48 sm:h-48"
-                                                             />
-                                                        ) : 
-                                                        null
+                                                            (
+                                                                <Image fill src={image.url}
+                                                                    alt='Product image'
+                                                                    className="h-4 w-4 rounded-md object-cover object-center sm:w-48 sm:h-48"
+                                                                />
+                                                            ) :
+                                                            null
                                                     }
                                                 </div>
                                             </div>
@@ -98,7 +99,7 @@ const Page = ()=> {
                                                         <div className="flex justify-between">
                                                             <h3 className="text-sm">
                                                                 <Link href={`/product/${product.id}`}
-                                                                className="font-medium text-gray-700 hover:text-gray-800"
+                                                                    className="font-medium text-gray-700 hover:text-gray-800"
                                                                 >{product.name}</Link>
                                                             </h3>
                                                         </div>
@@ -115,10 +116,10 @@ const Page = ()=> {
                                                     <div className="mt-4 sm:mt-0 sm:pr-9 w-20">
                                                         <div className="absolute right-0 top-0">
                                                             <Button aria-label="remove product"
-                                                             onClick={()=> removeItem(product.id)
-                                                             }
-                                                             variant='ghost'
-                                                             >
+                                                                onClick={() => removeItem(product.id)
+                                                                }
+                                                                variant='ghost'
+                                                            >
                                                                 <X className="h-5 w-5" aria-hidden='true' />
                                                             </Button>
                                                         </div>
@@ -146,9 +147,9 @@ const Page = ()=> {
                             <div className="flex items-center justify-between">
                                 <p className="text-sm text-gray-600">Subtotal</p>
                                 <p className="text-sm font-medium text-gray-900">
-                                    {isMounted 
-                                    ? formatPrice(cartTotal)
-                                    : <Loader2 className="h-4 w-4 animated-spin text-muted-foreground"/>}
+                                    {isMounted
+                                        ? formatPrice(cartTotal)
+                                        : <Loader2 className="h-4 w-4 animated-spin text-muted-foreground" />}
                                 </p>
                             </div>
 
@@ -158,35 +159,35 @@ const Page = ()=> {
                                 </div>
                                 <div className="text-sm font-medium text-gray-900">
                                     {
-                                        isMounted ? formatPrice(fee) : 
-                                        <Loader2 className="h-4 w-4 animated-spin text-muted-foreground"/>
+                                        isMounted ? formatPrice(fee) :
+                                            <Loader2 className="h-4 w-4 animated-spin text-muted-foreground" />
                                     }
 
                                 </div>
-                            </div> 
+                            </div>
 
                             <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                                 <div className="text-base font-medium text-gray-900">Order Total</div>
                                 <div className="text-base font-medium text-gray-900">
-                                {
-                                        isMounted ? formatPrice(fee + cartTotal) : 
-                                        <Loader2 className="h-4 w-4 animated-spin text-muted-foreground"/>
-                                }
+                                    {
+                                        isMounted ? formatPrice(fee + cartTotal) :
+                                            <Loader2 className="h-4 w-4 animated-spin text-muted-foreground" />
+                                    }
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-6" onClick={()=> createCheckoutSession({productIds})}>
-                                <Button 
-                                disabled= {items.length===0 || isLoading}
+                        <div className="mt-6" onClick={() => createCheckoutSession({ productIds })}>
+                            <Button
+                                disabled={items.length === 0 || isLoading}
                                 className="w-full" size='lg'>
-                                    {
-                                        isLoading ? (
-                                            <Loader2 className="w-4 h-4 animated-spin mr-1.5" />
-                                        ) : null
-                                    }
-                                    Checkout
-                                </Button>
+                                {
+                                    isLoading ? (
+                                        <Loader2 className="w-4 h-4 animated-spin mr-1.5" />
+                                    ) : null
+                                }
+                                Checkout
+                            </Button>
                         </div>
                     </section>
                 </div>
