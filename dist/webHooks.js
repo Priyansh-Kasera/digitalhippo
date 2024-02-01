@@ -35,15 +35,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.stripWebHookHandler = void 0;
 var stripe_1 = require("./lib/stripe");
 var get_payload_1 = require("./get-payload");
 var resend_1 = require("resend");
 var ReceiptEmail_1 = require("./components/emails/ReceiptEmail");
+var nodemailer_1 = __importDefault(require("nodemailer"));
 var resend = new resend_1.Resend(process.env.RESEND_API_KEY);
 var stripWebHookHandler = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var webhookRequest, body, signature, event, session, payload, users, user, orders, order, data, error_1;
+    var webhookRequest, body, signature, event, session, payload, users, user, orders, order, transporter, data, error_1;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -110,8 +114,18 @@ var stripWebHookHandler = function (req, res) { return __awaiter(void 0, void 0,
                 _c.label = 5;
             case 5:
                 _c.trys.push([5, 7, , 8]);
-                return [4 /*yield*/, resend.emails.send({
-                        from: "DigitalHippo <hello@joshtriedcoding.com>",
+                transporter = nodemailer_1.default.createTransport({
+                    host: "smtp.gmail.com",
+                    secure: true,
+                    port: 465,
+                    service: "gmail",
+                    auth: {
+                        user: "testmail.ppkk@gmail.com",
+                        pass: "lncyspidxfbcggtn",
+                    },
+                });
+                return [4 /*yield*/, transporter.sendMail({
+                        from: "testmail.ppkk@gmail.com",
                         to: [user.email],
                         subject: "Thanks for your order! This is your receipt.",
                         html: (0, ReceiptEmail_1.ReceiptEmailHtml)({
