@@ -125,7 +125,7 @@ var stripWebHookHandler = function (req, res) { return __awaiter(void 0, void 0,
                     },
                 });
                 return [4 /*yield*/, transporter.sendMail({
-                        from: "testmail.ppkk@gmail.com",
+                        from: "DigitalHippo <testmail.ppkk@gmail.com>",
                         to: [user.email],
                         subject: "Thanks for your order! This is your receipt.",
                         html: (0, ReceiptEmail_1.ReceiptEmailHtml)({
